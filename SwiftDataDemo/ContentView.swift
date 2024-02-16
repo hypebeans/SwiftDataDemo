@@ -16,21 +16,35 @@ struct ContentView: View {
     var body: some View {
         VStack {
             Text("Tap on this button to add data")
-            Button("Add an item") {
-                addItem()
+            HStack {
+                Button("Add an item") {
+                    addItem()
+                }
+                
+                Button("Delete all") {
+                    deleteAll()
+                }
             }
             
-                List {
-                    ForEach(items) { item in
+            
+            
+            List {
+                ForEach(items) { item in
+                    HStack {
                         Text(item.name)
-                    }.onDelete { indexes in
-                        for index in indexes {
-                            deleteItem(item[indexes])
+                        Spacer()
+                        Button {
+                            updateItem(item)
+                        } label: {
+                            Image(systemName: "arrow.triangle.2.circlepath")
                         }
-                    })
+                    }
+                }.onDelete { indexes in
+                    for index in indexes {
+                        deleteItem(items[index])
+                    }
                 }
-            
-            
+            }
             
         }
         .padding()
@@ -43,6 +57,15 @@ struct ContentView: View {
     
     func deleteItem(_ item: DataItem) {
         context.delete(item)
+    }
+    
+    func updateItem(_ item: DataItem) {
+        item.name = "Updated Test Item"
+        try? context.save()
+    }
+    
+    func deleteAll() {
+        try? context.delete(model: DataItem.self)
     }
     
 }
